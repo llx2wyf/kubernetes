@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: llx-nginx
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        task: task-nginx 
+        k8s-app: app-nginx
+    spec:
+      containers:
+      - name: llx-nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+---   nodeSelector:
+---     zone: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: llx-nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 8098
+    targetPort: 80
+    nodePort: 30898
+    protocol: TCP
+  selector:
+    k8s-app: app-nginx
+---  sessionAffinity: ClientIP
+---  sessionAffinity: None

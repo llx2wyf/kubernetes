@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rls102
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        task: rls 
+        k8s-app: rls102
+    spec:
+      containers:
+      - name: rls102
+        image: rls:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 30898
+          protocol: UDP
+        volumeMounts:
+        - mountPath: /home/ini
+          name: rls102-vol
+      volumes:
+      - name: rls102-vol
+        hostPath:
+          path: /root/swarm/rls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: rls102
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 30898
+    nodePort: 30898
+    protocol: UDP
+  selector:
+    k8s-app: rls102

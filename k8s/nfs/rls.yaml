@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dppvc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        task: dppvc 
+        k8s-app: dppvc
+    spec:
+      containers:
+      - name: dppvc
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 30898
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /home/ini
+          name: dppvc-vol
+      volumes:
+      - name: dppvc-vol
+        persistentVolumeClaim:
+           claimName: mypvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: svcpvc
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 30898
+    nodePort: 30111
+    protocol: TCP
+  selector:
+    k8s-app: dppvc
