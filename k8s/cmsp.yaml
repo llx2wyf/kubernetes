@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cmsp102
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        task: cmsp
+        k8s-app: cmsp102
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        cmsp: oka
+      containers:
+      - name: cmsp102
+        image: cmsp:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 30009
+          protocol: UDP
+        - containerPort: 30008
+          protocol: UDP
+        volumeMounts:
+        - mountPath: /home/ini
+          name: cmsp102-vol
+      volumes:
+      - name: cmsp102-vol
+        hostPath:
+          path: /root/server/cmsp
