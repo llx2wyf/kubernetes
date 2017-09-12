@@ -59,8 +59,9 @@ spec:
         k8s-app: kubernetes-dashboard
     spec:
       containers:
-      - name: kubernetes-dashboard
-        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.2
+      - name: kubernetes-dashboard-head
+        image: kubernetesdashboarddev/kubernetes-dashboard-amd64:head
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
           protocol: TCP
